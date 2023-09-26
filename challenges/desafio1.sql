@@ -1,23 +1,154 @@
--- Descomente e altere as linhas abaixo:
+DROP DATA BASE IF EXISTS SpotifyClone;
+CREATE DATABASE SpotifyClone;
+USE SpotifyClone;
 
--- DROP DATABASE IF EXISTS SpotifyClone;
--- CREATE DATABASE IF NOT EXISTS SpotifyClone;
--- CREATE TABLE SpotifyClone.tabela1(
---     coluna1 tipo restricoes,
---     coluna2 tipo restricoes,
---     colunaN tipo restricoes,
--- ) engine = InnoDB;
--- CREATE TABLE SpotifyClone.tabela2(
---     coluna1 tipo restricoes,
---     coluna2 tipo restricoes,
---     colunaN tipo restricoes,
--- ) engine = InnoDB;
--- INSERT INTO SpotifyClone.tabela1 (coluna1, coluna2)
--- VALUES
---   ('exemplo de dados 1', 'exemplo de dados A'),
---   ('exemplo de dados 2', 'exemplo de dados B'),
---   ('exemplo de dados 3', 'exemplo de dados C');
--- INSERT INTO SpotifyClone.tabela2 (coluna1, coluna2)
--- VALUES
---   ('exemplo de dados 1', 'exemplo de dados X'),
---   ('exemplo de dados 2', 'exemplo de dados Y');
+CREATE TABLE artistas(
+    id_artista INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+) engine = InnoDB;
+
+INSERT INTO artistas (nome)
+VALUES ('Beyoncé'), 
+('Queen'), 
+('Elis Regina'), 
+('Baco Exu do Blues'), 
+('Blind Guardian'), 
+('Nina Simone');
+
+CREATE TABLE planos(
+    id_plano INT PRIMARY KEY AUTO_INCREMENT,
+    tipo VARCHAR(55) NOT NULL,
+    valor DECIMAL(10, 2) NOT NULL,
+) engine = InnoDB;
+
+INSERT INTO planos (tipo, valor)
+VALUES ('gratuito', 0), 
+('universitário', 5.99), 
+('pessoal', 6.99), 
+('familiar', 7.99);
+
+CREATE TABLE usuários(
+    id_usuário INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(200) NOT NULL,
+    idade INT NOT NULL,
+    id_plano INT NOT NULL,
+    data_assinatura DATE NOT NULL,
+    FOREIGN KEY (id_plano) REFERENCES planos(id_plano)
+);
+
+INSERT INTO usuários (nome, idade, id_plano, data_assinatura)
+VALUES ('Barbara Liskov', 82, 1, '2019-10-20'),
+('Robert Cecil Martin', 58, 1, '2017-01-06'),
+('Ada Lovelace', 37, 4, '2017-12-30'),
+('Martin Fowler', 46, 4, '2017-01-17'),
+('Sandi Metz', 58, 4, '2018-04-29'),
+('Paulo Freire', 19, 2, '2018-02-14'),
+('Bell Hooks', 26, 2, '2018-01-05'),
+('Christopher Alexander', 85, 3, '2019-06-05'),
+('Judith Butler', 45, 3, '2020-05-13'),
+('Jorge Amado', 58, 3, '2017-02-17');
+
+CREATE TABLE albuns (
+    id_album INT PRIMARY KEY AUTO_INCREMENT,
+    nome_album VARCHAR(200) NOT NULL,
+    nome_artista VARCHAR(200),
+    id_artista INT NOT NULL,
+    ano_lançamento INT NOT NULL,
+    FOREIGN KEY (nome_artista) REFERENCES artistas(nome),
+    FOREIGN KEY (id_artista) REFERENCES artistas(id_artista)
+) engine = InnoDB;
+
+INSERT INTO albuns (nome_album, nome_artista, id_artista, ano_lançamento)
+VALUES ('Renaissance', 'Beyoncé', 1, 2022),
+('Jazz', 'Queen', 2, 1978)
+('Hot Space', 'Queen', 2, 1982), 
+('Falso Brilhante', 'Elis Regina', 3, 1998), 
+('Vento de Maio', 'Elis Regina', 3, 2001), 
+('QVVJFA?', 'Baco Exu do Blues', 4, 2003), 
+('Somewhere Far Beyond', 'Blind Guardian', 5, 2007), 
+('I Put A Spell On You', 'Nina Simone', 6, 2012);
+
+CREATE TABLE canções(
+    id_canção INT PRIMARY KEY AUTO_INCREMENT,
+    nome_canção VARCHAR(200) NOT NULL,
+    nome_artista VARCHAR(200),
+    id_album INT NOT NULL,
+    duração_segundos INT NOT NULL,
+    FOREIGN KEY (nome_artista) REFERENCES artistas(nome),
+    FOREIGN KEY (id_album) REFERENCES albuns(id_album)
+) engine = InnoDB;
+
+INSERT INTO canções (nome_canção, nome_artista, id_album, duração_segundos)
+VALUES ("BREAK MY SOUL", "Beyoncé", 1, 279),
+("VIRGO'S GROOVE", "Beyoncé", 1, 369),
+("ALIEN SUPERSTAR", "Beyoncé", 1, 116),
+("Don't Stop Me Now", "Queen", 2, 203),
+("Under Pressure", "Queen", 3, 152),
+("Como Nossos Pais", "Elis Regina", 4, 105),
+("O Medo de Amar é o Medo de Ser Livre", "Elis Regina", 5, 207),
+("Samba em Paris", 'Baco Exu do Blues', 6, 267)
+("The Bard's Song", "Blind Guardian", 7, 244),
+('Feeling Good', 'Nina Simone', 8, 100);
+
+
+CREATE TABLE histórico_reprodução(
+    id_histórico_reprodução INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuário INT NOT NULL,
+    nome_canção VARCHAR(255),
+    id_canção INT NOT NULL,
+    nome_artista VARCHAR(255),
+    id_artista INT NOT NULL,
+    data_reprodução DATETIME NOT NULL,
+    FOREIGN KEY (id_usuário) REFERENCES usuários(id_usuário),
+    FOREIGN KEY (nome_canção) REFERENCES canções(nome_canção),
+    FOREIGN KEY (id_canção) REFERENCES canções(id_canção),
+    FOREIGN KEY (nome_artista) REFERENCES artistas(nome),
+    FOREIGN KEY (id_artista) REFERENCES artista(id_artista)
+)
+
+INSERT INTO histórico_reprodução (id_usuário, nome_canção, id_canção, nome_artista, id_artista, data_reprodução)
+VALUES (1, "Samba em Paris", 8, "Baco Exu do Blues", 4, "2022-02-28 10:45:55"),
+(1, "VIRGO'S GROOVE", 2, "Beyoncé", 1, "2020-05-02 05:30:35"),
+(1, "Feeling Good", 10, "Nina Simone", 6, "2020-03-06 11:22:33"),
+(2, "Feeling Good", 10, "Nina Simone", 6, "2022-08-05 08:05:17"),
+(2, "O Medo de Amar é o Medo de Ser Livre", 7, "Elis Regina", 3, "2020-01-02 07:40:33"),
+(3, "Feeling Good", 10, "Nina Simone", 6, "2020-11-13 16:55:13"),
+(3, "VIRGO'S GROOVE", 2, "Beyoncé", 1, "2020-12-05 18:38:30"),
+(4, "Samba em Paris", 8, "Baco Exu do Blues", 4, "2021-08-15 17:10:10"),
+(5, "Samba em Paris", 8, "Baco Exu do Blues", 4, "2022-01-09 01:44:33"),
+(5, "Under Pressure", 5, "Queen", 2, "2020-08-06 15:23:43"),
+(6, "O Medo de Amar é o Medo de Ser Livre", 7, "Elis Regina", 3, "2017-01-24 00:31:17"),
+(6, "BREAK MY SOUL", 1, "Beyoncé", 1, "2017-10-12 12:35:20"),
+(7, "Don't Stop Me Now", 4, "Queen", 2, "2011-12-15 22:30:49"),
+(8, "Don't Stop Me Now", 4, "Queen", 2, "2012-03-17 14:56:41"),
+(9, "The Bard's Song", 9, "Blind Guardian", 5, "2022-02-24 21:14:22"),
+(10, "ALIEN SUPERSTAR", 3, "Beyoncé", 1, "2015-12-13 08:30:22");
+
+
+CREATE TABLE seguindo_artistas(
+    id_usuário INT,
+    nome_artista VARCHAR(255),
+    id_artista INT,
+    PRIMARY KEY (id_usuário, id_artista),
+    FOREIGN KEY (id_usuário) REFERENCES usuários(id_usuário),
+    FOREIGN KEY (nome_artista) REFERENCES artistas(nome),
+    FOREIGN KEY (id_artista) REFERENCES artistas(id_artista),
+) engine = InnoDB;
+
+INSERT INTO seguindo_artistas (id_usuário, nome_artista, id_artista)
+VALUES (1, 'Beyoncé', 1),
+(1, 'Queen', 2),
+(1, 'Elis Regina', 3),
+(2, 'Beyoncé', 1),
+(2, 'Elis Regina', 3),
+(3, 'Queen', 2),
+(4, 'Baco Exu do Blues', 4),
+(5, 'Blind Guardian', 5),
+(5, 'Nina Simone', 6),
+(6, 'Nina Simone', 6),
+(6, 'Beyoncé', 1),
+(7, 'Nina Simone', 6),
+(8, NULL, NULL),
+(9, 'Elis Regina', 3),
+(10, 'Queen', 2);
+
