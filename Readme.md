@@ -61,11 +61,11 @@ Abaixo você pode visualizar uma planilha com as tabelas que deverão ser normal
 
 ## Instruções de Instalação
 
-<summary>Início rápido com apenas um container MySQL</summary><br>
-> :atenção: **Atenção**: É necessário criar um container MySQL e passar as credenciais através de variáveis de ambiente. 
-Veja a [FAQ](./FAQ.md#rodando-o-projeto-localmente) para mais detalhes.
->
-> :atenção: O avaliador espera que a versão do `node` utilizada seja a 16.
+Início rápido com apenas um container MySQL
+
+**Atenção**: É necessário criar um container MySQL e passar as credenciais através de variáveis de ambiente. 
+O avaliador espera que a versão do `node` utilizada seja a 16.
+
 ```bash
 npm install
 docker run -p 3306:3306 --name mysql_8 -e MYSQL_ROOT_PASSWORD=password --platform=linux/amd64 -d mysql:8.0.23 mysqld --default-authentication-plugin=mysql_native_password
